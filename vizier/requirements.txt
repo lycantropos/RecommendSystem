@@ -1,0 +1,6 @@
+-e .
+# setup script requirements
+setuptools
+# managing script requirements
+click==6.6  # for command-line options and arguments
+pydevd

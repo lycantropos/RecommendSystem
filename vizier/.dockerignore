@@ -1,0 +1,10 @@
+Dockerfile
+.dockerignore
+.gitignore
+*.log
+*.egg-info
+.cache/
+.eggs/
+docker-compose.yml
+.git/
+.idea/

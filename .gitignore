@@ -48,3 +48,6 @@ gen
 
 # tests results
 result.xml
+
+# logs
+*.log

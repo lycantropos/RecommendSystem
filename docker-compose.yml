@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  vizier-postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=vizier
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+
+  vizier:
+    image: vizier:latest
+    build: ./vizier
+    working_dir: /opt/vizier/
+    entrypoint: "/opt/vizier/docker-entrypoint.sh"
+    command:
+      - run
+    volumes:
+      - ./vizier:/opt/vizier
+    depends_on:
+      - vizier-postgres
+  # host for remote debugging, more info at README
+    extra_hosts:
+      - "dockerhost:$DOCKERHOST"
+
+volumes:
+  postgres_data:
+    driver: local
