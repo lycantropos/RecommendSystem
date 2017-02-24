@@ -1,6 +1,6 @@
--e .
 # setup script requirements
-setuptools
+setuptools==34.2.0
 # managing script requirements
 click==6.6  # for command-line options and arguments
+# debugging
 pydevd

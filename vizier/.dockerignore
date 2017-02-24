@@ -1,10 +1,9 @@
-Dockerfile
-.dockerignore
-.gitignore
-*.log
+# Python
+*.pyc
 *.egg-info
-.cache/
-.eggs/
-docker-compose.yml
-.git/
-.idea/
+.coverage
+.eggs
+__pycache__
+
+# IDEA
+*.iml

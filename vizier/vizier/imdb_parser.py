@@ -1,14 +1,13 @@
 import csv
+import logging
 import os
 import urllib.request
-import logging
 from typing import Dict, Union
 
-from bs4 import BeautifulSoup
 import requests
-from bs4 import Tag
+from bs4 import BeautifulSoup
 
-from vizier.config import DATA_DIR, LINKS_FILE_NAME, FILMS_DATABASE_NAME, SEP
+from vizier.config import LINKS_FILE_NAME, FILMS_DATABASE_NAME, SEP
 
 OUTPUT_FILE_NAME = 'movies.txt'
 

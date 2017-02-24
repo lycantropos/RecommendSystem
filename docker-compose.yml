@@ -5,20 +5,25 @@ services:
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     environment:
       - POSTGRES_DB=vizier
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
 
   vizier:
-    image: vizier:latest
+    image: lycantropos/vizier:latest
     build: ./vizier
     working_dir: /opt/vizier/
     entrypoint: "/opt/vizier/docker-entrypoint.sh"
     command:
       - run
+      - --clean
+      - --init
     volumes:
       - ./vizier:/opt/vizier
+    environment:
+      - POSTGRES_URI=postgresql://username:password@vizier-postgres/vizier
     depends_on:
       - vizier-postgres
   # host for remote debugging, more info at README
