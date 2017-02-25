@@ -11,14 +11,11 @@ LINKS_FILE_NAME = 'links.csv'
 WIKILINKS_DATABASE_PATH = os.path.join(DATA_DIR, 'wikipedia')
 WIKILINKS_DATABASE_NAME = 'wiki.csv'
 
-GENRES = {'Action', 'Adult', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime',
-          'Documentary', 'Drama', 'Family',
-          'Fantasy', 'Film-Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery',
-          'N/A', 'News', 'Romance',
-          'Sci-Fi', 'Short', 'Sport', 'Thriller', 'War', 'Western'}
-SEP = '},{'
 BASE_DIR = os.path.dirname(__file__)
 
 PACKAGE = 'vizier'
 CONFIG_DIR_NAME = 'configurations'
 LOGGING_CONF_FILE_NAME = 'logging.conf'
+
+RELEASE_DATE_FORMAT = '%d %b %Y'
+NOT_AVAILABLE_VALUE_ALIAS = 'N/A'

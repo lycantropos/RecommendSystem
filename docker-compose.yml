@@ -20,6 +20,7 @@ services:
       - run
       - --clean
       - --init
+      - --seed
     volumes:
       - ./vizier:/opt/vizier
     environment:

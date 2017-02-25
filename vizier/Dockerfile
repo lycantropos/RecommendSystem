@@ -6,8 +6,8 @@ WORKDIR "/opt/vizier"
 ENV LC_ALL=C.UTF-8 \
     LANG=C.UTF-8
 
-# psycopg2 package requirement http://stackoverflow.com/a/5450183
 RUN apt-get update \
+# psycopg2 package requirement http://stackoverflow.com/a/5450183
  && apt-get install -y libpq-dev \
                        python3-setuptools
 

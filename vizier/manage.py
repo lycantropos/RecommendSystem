@@ -1,7 +1,6 @@
 import logging
 import logging.config
 import os
-import time
 
 import click
 import pkg_resources
@@ -13,6 +12,11 @@ from vizier.config import (PACKAGE,
                            CONFIG_DIR_NAME,
                            LOGGING_CONF_FILE_NAME)
 from vizier.models.base import Base
+from vizier.models.film import GENRES_NAMES, Genre
+from vizier.services.data_access.service import get_session, parse_films
+from vizier.wiki_parser import NEXT_YEAR, FIRST_YEAR
+
+logger = logging.getLogger(__file__)
 
 
 @click.group(name='main')
@@ -37,15 +41,20 @@ def set_logging(logging_conf_file_path: str, verbose: bool):
 @main.command(name='run')
 @click.option('--clean', is_flag=True, help='Removes Postgres database.')
 @click.option('--init', is_flag=True, help='Initializes Postgres database.')
+@click.option('--seed', is_flag=True, help='Adds test data to database.')
 @click.pass_context
-def run(ctx: click.Context, clean: bool, init: bool):
+def run(ctx: click.Context, clean: bool, init: bool, seed: bool):
     if clean:
         ctx.invoke(clean_db)
     if init:
         ctx.invoke(init_db)
+    if seed:
+        ctx.invoke(seed_data)
     logging.info('Running "Vizier" service.')
-    while True:
-        time.sleep(5)
+    postgres_db_uri = make_url(ctx.obj['postgres_uri'])
+    parse_films(postgres_db_uri,
+                start_year=FIRST_YEAR,
+                stop_year=NEXT_YEAR)
 
 
 @main.command(name='clean_db')
@@ -98,6 +107,19 @@ def init_postgres(db_uri: URL):
     logging.info('Creating Postgres database schema')
     engine = create_engine(db_uri)
     Base.metadata.create_all(bind=engine)
+
+
+@main.command(name='seed_data')
+@click.pass_context
+def seed_data(ctx: click.Context):
+    """Adds test data to database."""
+    postgres_db_uri = make_url(ctx.obj['postgres_uri'])
+    engine = create_engine(postgres_db_uri)
+    with get_session(engine) as session:
+        logging.info('Seeding data')
+        for genre_name in GENRES_NAMES:
+            session.add(Genre(genre_name))
+        session.commit()
 
 
 if __name__ == '__main__':
