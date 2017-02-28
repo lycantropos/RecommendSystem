@@ -8,8 +8,6 @@ RATINGS_DATABASE_NAME = 'ratings.csv'
 FILMS_DATABASE_NAME = 'movies.txt'
 FILMS_WITH_PLOT_DATABASE_NAME = 'movies_full.csv'
 LINKS_FILE_NAME = 'links.csv'
-WIKILINKS_DATABASE_PATH = os.path.join(DATA_DIR, 'wikipedia')
-WIKILINKS_DATABASE_NAME = 'wiki.csv'
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -19,3 +17,7 @@ LOGGING_CONF_FILE_NAME = 'logging.conf'
 
 RELEASE_DATE_FORMAT = '%d %b %Y'
 NOT_AVAILABLE_VALUE_ALIAS = 'N/A'
+FIRST_FILM_YEAR = 1887
+
+WIKIPEDIA_API_URL = 'https://en.wikipedia.org/w/api.php'
+IMDB_API_URL = 'https://www.omdbapi.com'

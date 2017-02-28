@@ -1,6 +1,7 @@
 import logging
 import logging.config
 import os
+from datetime import date
 
 import click
 import pkg_resources
@@ -10,11 +11,12 @@ from sqlalchemy.exc import ProgrammingError
 
 from vizier.config import (PACKAGE,
                            CONFIG_DIR_NAME,
-                           LOGGING_CONF_FILE_NAME)
+                           LOGGING_CONF_FILE_NAME,
+                           FIRST_FILM_YEAR)
 from vizier.models.base import Base
 from vizier.models.film import GENRES_NAMES, Genre
-from vizier.services.data_access.service import get_session, parse_films
-from vizier.wiki_parser import NEXT_YEAR, FIRST_YEAR
+from vizier.services.data_access.service import get_session
+from vizier.services.parser import parse_films
 
 logger = logging.getLogger(__file__)
 
@@ -52,9 +54,10 @@ def run(ctx: click.Context, clean: bool, init: bool, seed: bool):
         ctx.invoke(seed_data)
     logging.info('Running "Vizier" service.')
     postgres_db_uri = make_url(ctx.obj['postgres_uri'])
+    next_year = date.today().year + 1
     parse_films(postgres_db_uri,
-                start_year=FIRST_YEAR,
-                stop_year=NEXT_YEAR)
+                start_year=FIRST_FILM_YEAR,
+                stop_year=next_year)
 
 
 @main.command(name='clean_db')
