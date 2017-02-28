@@ -45,11 +45,6 @@ docker-compose up
 ```
 
 ### Running with Docker for development
-Remove `Python` cache files (may require super user rights):
-```bash
-find . | grep -E "__pycache__" | xargs rm -rf
-```
-
 Run `Docker` container with `PyCharm` `Python Remote Debug`:
 ```bash
 ./set-dockerhost.sh docker-compose up
