@@ -4,6 +4,7 @@ PLOT_SECTION_NAMES = ['Plot', 'PlotEdit', 'Synopsis',
                       'Plot summary', 'Plot synopsis']
 
 
+# TODO: replace 'wikipedia' library with async functions
 async def parse_plot_content(link: str) -> str:
     page = wikipedia.page(link, auto_suggest=False)
     plot_sections = filter(None,

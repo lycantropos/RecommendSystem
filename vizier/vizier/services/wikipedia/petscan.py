@@ -2,11 +2,13 @@ import itertools
 import logging
 from asyncio import sleep
 from json import JSONDecodeError
-from typing import List, Dict, Any
+from typing import (Any,
+                    Dict, List)
 
 from aiohttp import ClientSession
 
-from vizier.config import PETSCAN_API_URL, RETRY_INTERVAL_IN_SECONDS
+from vizier.config import (PETSCAN_API_URL,
+                           RETRY_INTERVAL_IN_SECONDS)
 from vizier.services.utils import A_TIMEOUT_OCCURRED
 
 logger = logging.getLogger(__name__)

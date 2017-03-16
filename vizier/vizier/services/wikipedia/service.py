@@ -1,13 +1,10 @@
 import re
 from typing import (Optional,
-                    Generator,
-                    Tuple, Iterable)
+                    Iterable)
 
-import pydevd
 from aiohttp import ClientSession
 
 from vizier.config import WIKIPEDIA_API_URL
-from vizier.types import StringGenerator
 from vizier.utils import IMDB_ID_RE
 from .petscan import query_petscan
 

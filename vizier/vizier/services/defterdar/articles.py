@@ -3,7 +3,6 @@ from asyncio import (AbstractEventLoop,
                      gather, ensure_future)
 from typing import List
 
-import pydevd
 from aiohttp import ClientSession
 from sqlalchemy import Column
 

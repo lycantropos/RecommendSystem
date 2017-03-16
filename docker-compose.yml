@@ -1,11 +1,10 @@
-version: '2'
+version: '3'
 
 services:
   vizier-postgres:
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     environment:
       - POSTGRES_DB=vizier
       - POSTGRES_USER=username
