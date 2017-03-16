@@ -1,13 +1,15 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import (Column,
+                        Integer,
+                        String)
 
-from .base import Base
+from .base import Base, ModelMixin
 
 
-class Director(Base):
+class Director(Base, ModelMixin):
     __tablename__ = 'directors'
 
     id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, unique=True)
+    name = Column('name', String, nullable=False, unique=True)
 
     def __init__(self, name: str):
         self.name = name
@@ -15,17 +17,12 @@ class Director(Base):
     def __hash__(self):
         return hash(self.name)
 
-    def __eq__(self, other: Base):
-        if not isinstance(other, type(self)):
-            return False
-        return self.name == other.name
 
-
-class Writer(Base):
+class Writer(Base, ModelMixin):
     __tablename__ = 'writers'
 
     id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, unique=True)
+    name = Column('name', String, nullable=False, unique=True)
 
     def __init__(self, name: str):
         self.name = name
@@ -33,25 +30,15 @@ class Writer(Base):
     def __hash__(self):
         return hash(self.name)
 
-    def __eq__(self, other: Base):
-        if not isinstance(other, type(self)):
-            return False
-        return self.name == other.name
 
-
-class Actor(Base):
+class Actor(Base, ModelMixin):
     __tablename__ = 'actors'
 
     id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, unique=True)
+    name = Column('name', String, nullable=False, unique=True)
 
     def __init__(self, name: str):
         self.name = name
 
     def __hash__(self):
         return hash(self.name)
-
-    def __eq__(self, other: Base):
-        if not isinstance(other, type(self)):
-            return False
-        return self.name == other.name

@@ -24,7 +24,7 @@ services:
     volumes:
       - ./vizier:/opt/vizier
     environment:
-      - POSTGRES_URI=postgresql://username:password@vizier-postgres/vizier
+      - DB_URI=postgresql://username:password@vizier-postgres/vizier
     depends_on:
       - vizier-postgres
   # host for remote debugging, more info at README

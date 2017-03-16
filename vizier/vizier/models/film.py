@@ -1,5 +1,7 @@
-from datetime import timedelta, date
-from typing import Optional
+from datetime import (timedelta,
+                      date)
+from typing import (Optional,
+                    Dict)
 
 from sqlalchemy import (Table, Column,
                         ForeignKey,
@@ -9,21 +11,25 @@ from sqlalchemy import (Table, Column,
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 
-from .base import Base
+from .article import Article
+from .base import Base, ModelMixin
+from .genre import Genre
 from .personalities import Director, Writer, Actor
+from .plot import Plot
+from .utils import (parse_year,
+                    parse_imdb_id,
+                    parse_content_rating,
+                    parse_rating,
+                    parse_date,
+                    parse_duration,
+                    normalize_value)
 
-GENRES_NAMES = ('Action', 'Adult', 'Adventure', 'Animation', 'Biography',
-                'Comedy', 'Crime', 'Documentary', 'Drama', 'Family',
-                'Fantasy', 'Film-Noir', 'History', 'Horror', 'Music',
-                'Musical', 'Mystery', 'News', 'Romance', 'Sci-Fi',
-                'Short', 'Sport', 'Thriller', 'War', 'Western')
 # SQLAlchemy uses "PascalCase" for column type names
 # while PostgreSQL uses "snake_case" for enum names
-GenreName = ENUM(*GENRES_NAMES, name='genre_name')
-
 FILM_TYPES = ('movie',)
 FilmType = ENUM(*FILM_TYPES, name='film_type')
 
+# more info at https://contribute.imdb.com/updates/guide/certificates
 CONTENT_RATINGS = ('-12', '-17', '10', '11', '12', '12A', '12PG', '13', '13+',
                    '14', '14A', '15', '15A', '15PG', '16', '16+', '18', '18+',
                    '18A', '18PA', '18PL', '18SG', '18SX', '6', '7', 'A', 'A.G.',
@@ -34,7 +40,7 @@ CONTENT_RATINGS = ('-12', '-17', '10', '11', '12', '12A', '12PG', '13', '13+',
                    'M/16', 'M/18', 'M/4', 'M/6', 'M18', 'MA', 'NC-17', 'NC16',
                    'PG', 'PG-13', 'R', 'R(A)', 'R-13', 'R-18', 'R13', 'R16',
                    'R18', 'R21', 'RP13', 'RP16', 'RP18', 'S', 'T', 'TE', 'U',
-                   'VM14', 'VM18', 'X', 'XXX', 'o.Al.', 'NOT RATED')
+                   'VM14', 'VM18', 'X', 'XXX', 'o.Al.')
 ContentRating = ENUM(*CONTENT_RATINGS, name='content_rating')
 
 films_directors_table = Table('films_directors', Base.metadata,
@@ -62,27 +68,7 @@ films_genres_table = Table('films_genres', Base.metadata,
                                   ForeignKey('genres.id')))
 
 
-class Genre(Base):
-    __tablename__ = 'genres'
-
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', GenreName)
-
-    def __init__(self, name: str):
-        self.name = name
-
-
-class Plot(Base):
-    __tablename__ = 'plots'
-
-    id = Column('id', BigInteger, primary_key=True, autoincrement=True)
-    content = Column('content', String)
-
-    def __init__(self, content: str):
-        self.content = content
-
-
-class Film(Base):
+class Film(Base, ModelMixin):
     __tablename__ = 'films'
 
     id = Column('id', BigInteger, primary_key=True, autoincrement=True)
@@ -93,26 +79,30 @@ class Film(Base):
     duration = Column('duration', Interval)
     release_date = Column('release_date', Date)
     content_rating = Column('content_rating', ContentRating)
-    imdb_id = Column('imdb_id', Integer, nullable=False)
+    imdb_id = Column('imdb_id', Integer, unique=True, nullable=False)
     imdb_rating = Column('imdb_rating', Float)
     poster_url = Column('poster_url', String)
     plot_id = Column('plot_id', BigInteger, ForeignKey('plots.id'))
-    wikipedia_article_title = Column('wikipedia_article_title', String, nullable=False)
+    article_id = Column('article_id', BigInteger, ForeignKey('articles.id'))
 
     genres = relationship(Genre, secondary=films_genres_table)
     directors = relationship(Director, secondary=films_directors_table)
     actors = relationship(Actor, secondary=films_actors_table)
     writers = relationship(Writer, secondary=films_writers_table)
     plot = relationship(Plot, uselist=False)
+    article = relationship(Article, uselist=False)
 
-    def __init__(self, title: str, type: str,
-                 languages: str, countries: str,
+    def __init__(self, title: str,
+                 type: str,
+                 languages: str,
+                 countries: str,
                  content_rating: str,
-                 year: int, release_date: Optional[date],
+                 year: int,
+                 release_date: Optional[date],
                  duration: Optional[timedelta],
-                 imdb_id: Optional[int], imdb_rating: Optional[float],
-                 poster_url: Optional[str],
-                 wikipedia_article_title: str):
+                 imdb_id: Optional[int],
+                 imdb_rating: Optional[float],
+                 poster_url: Optional[str]):
         self.type = type
         self.title = title
         self.countries = countries
@@ -124,4 +114,31 @@ class Film(Base):
         self.poster_url = poster_url
         self.imdb_id = imdb_id
         self.imdb_rating = imdb_rating
-        self.wikipedia_article_title = wikipedia_article_title
+
+    @staticmethod
+    def deserialize(raw_film: Dict[str, str]) -> 'Film':
+        raw_film = dict(zip(raw_film.keys(),
+                            map(normalize_value, raw_film.values())))
+        title = raw_film['Title']
+        type = raw_film['Type']
+        languages = raw_film['Language']
+        countries = raw_film['Country']
+        content_rating = parse_content_rating(raw_film['Rated'])
+        year = parse_year(raw_film['Year'])
+        imdb_id = parse_imdb_id(raw_film['imdbID'])
+        imdb_rating = parse_rating(raw_film['imdbRating'])
+        duration = parse_duration(raw_film['Runtime'])
+        release_date_str = raw_film['Released']
+        release_date = parse_date(release_date_str)
+        poster_url = raw_film['Poster']
+        return Film(title=title,
+                    type=type,
+                    languages=languages,
+                    countries=countries,
+                    content_rating=content_rating,
+                    year=year,
+                    release_date=release_date,
+                    duration=duration,
+                    imdb_id=imdb_id,
+                    imdb_rating=imdb_rating,
+                    poster_url=poster_url)

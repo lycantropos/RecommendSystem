@@ -1,6 +1,8 @@
 # setup script requirements
-setuptools==34.2.0
+setuptools>=34.2.0
 # managing script requirements
-click==6.6  # for command-line options and arguments
+click>=6.6  # for command-line options and arguments
+SQLAlchemy-Utils>=0.32.12  # for database creation/cleaning
 # debugging
-pydevd
+pydevd>=1.0.0
+

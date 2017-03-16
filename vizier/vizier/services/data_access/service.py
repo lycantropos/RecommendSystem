@@ -1,11 +1,9 @@
 from contextlib import contextmanager
-from typing import Union
 
 from sqlalchemy.engine import Engine, create_engine
-from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
 
-DbUriType = Union[str, URL]
+from vizier.types import DbUriType
 
 
 @contextmanager
