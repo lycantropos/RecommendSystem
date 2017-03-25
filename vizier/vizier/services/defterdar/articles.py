@@ -4,15 +4,15 @@ from asyncio import (AbstractEventLoop,
 from typing import List
 
 from aiohttp import ClientSession
+from beylerbey.data_access import (is_db_uri_mysql,
+                                   get_connection_pool,
+                                   insert)
+from beylerbey.types import ConnectionPoolType
 from sqlalchemy import Column
+from sqlalchemy.engine.url import URL
 
 from vizier.models import Article
-from vizier.services.data_access import (is_db_uri_mysql,
-                                         get_connection_pool,
-                                         insert)
 from vizier.services.wikipedia import get_articles_titles
-from vizier.types import (DbUriType,
-                          ConnectionPoolType)
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 async def parse_films_articles(*, start_year: int,
                                stop_year: int,
                                max_connections: int = 50,
-                               db_uri: DbUriType,
+                               db_uri: URL,
                                loop: AbstractEventLoop
                                ) -> None:
     db_is_mysql = await is_db_uri_mysql(db_uri)
@@ -92,12 +92,12 @@ async def parse_films_article_batch(
         connection_pool: ConnectionPoolType) -> None:
     articles_titles = await get_articles_titles(year=year,
                                                 session=session)
-    values = [(title, year) for title in articles_titles]
+    records = [(title, year) for title in articles_titles]
     async with connection_pool.acquire() as connection:
         await insert(table_name=table_name,
                      columns_names=columns_names,
                      unique_columns_names=unique_columns_names,
-                     values=values,
+                     records=records,
                      merge=True,
                      connection=connection,
                      is_mysql=is_mysql)

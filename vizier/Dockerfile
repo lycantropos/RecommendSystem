@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.6
 MAINTAINER lycantropos <azatibrakov@gmail.com>
 
 WORKDIR "/opt/vizier"
@@ -9,7 +9,8 @@ ENV LC_ALL=C.UTF-8 \
 RUN apt-get update \
 # psycopg2 package requirement http://stackoverflow.com/a/5450183
  && apt-get install -y libpq-dev \
-                       python3-setuptools
+                       python3-setuptools \
+                       git
 
 COPY requirements.txt ./
 

@@ -1,8 +1,13 @@
+# for asynchronous working with PostgreSQL/MySQL
+git+https://github.com/lycantropos/beylerbey#egg=beylerbey
+
 # setup script requirements
 setuptools>=34.2.0
+
 # managing script requirements
 click>=6.6  # for command-line options and arguments
 SQLAlchemy-Utils>=0.32.12  # for database creation/cleaning
+git+https://github.com/lycantropos/python-utils#egg=python_utils
+
 # debugging
 pydevd>=1.0.0
-

@@ -5,6 +5,15 @@ from typing import (Dict,
                     Tuple, List)
 
 from aiohttp import ClientSession
+from beylerbey.data_access import (get_connection_pool,
+                                   is_db_uri_mysql,
+                                   fetch,
+                                   fetch_records_count)
+from beylerbey.queries import ORDERS_ALIASES
+from beylerbey.types import (ConnectionPoolType,
+                             FiltersType,
+                             OrderingType)
+from sqlalchemy.engine.url import URL
 
 from vizier.config import NOT_AVAILABLE_VALUE_ALIAS
 from vizier.models import (Article,
@@ -12,16 +21,7 @@ from vizier.models import (Article,
                            Writer, Director,
                            Actor, Film)
 from vizier.models.base import Base
-from vizier.services.data_access import (get_connection_pool,
-                                         is_db_uri_mysql,
-                                         fetch,
-                                         fetch_records_count)
 from vizier.services.imdb import get_raw_film
-from vizier.services.queries import ORDERS_ALIASES
-from vizier.types import (DbUriType,
-                          ConnectionPoolType,
-                          FiltersType,
-                          OrderingType)
 
 
 async def parse_films(*,
@@ -29,7 +29,7 @@ async def parse_films(*,
                       stop_year: int,
                       max_connections: int = 50,
                       step: int = 1000,
-                      db_uri: DbUriType,
+                      db_uri: URL,
                       loop: AbstractEventLoop) -> None:
     db_is_mysql = await is_db_uri_mysql(db_uri)
     table_name = Article.__tablename__
@@ -145,7 +145,7 @@ def parse_plot(content: str) -> Plot:
 
 def parse_related_instances(*, cls: Base, names_str: str) -> List[Base]:
     names = parse_names(names_str)
-    return [cls(name)
+    return [cls(name=name)
             for name in names
             if name != NOT_AVAILABLE_VALUE_ALIAS]
 

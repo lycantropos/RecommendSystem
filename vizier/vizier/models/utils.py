@@ -1,23 +1,15 @@
 import re
-from datetime import date, datetime, timedelta
+from datetime import (datetime,
+                      date,
+                      timedelta)
 from typing import Optional
 
-from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy.orm.attributes import InstrumentedAttribute
-
 from vizier.config import NOT_AVAILABLE_VALUE_ALIAS
-from vizier.types import StringGenerator
 from vizier.utils import IMDB_ID_RE
 
 RELEASE_DATE_FORMAT = '%d %b %Y'
 UNRATED_CONTENT_RATINGS = {'NOT RATED', 'UNRATED'}
 DURATION_RE = re.compile('^\d+(?= min$)')
-
-
-def get_columns_fields_names(cls: DeclarativeMeta) -> StringGenerator:
-    for field_name, value in vars(cls).items():
-        if isinstance(value, InstrumentedAttribute):
-            yield field_name
 
 
 def parse_year(year_str: str) -> int:

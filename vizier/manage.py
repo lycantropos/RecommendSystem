@@ -18,8 +18,8 @@ from vizier.config import (PACKAGE,
 from vizier.models import Genre
 from vizier.models.base import Base
 from vizier.models.genre import GENRES_NAMES
-from vizier.services.data_access import (get_session,
-                                         get_engine)
+from python_utils.data_access import (get_session,
+                                      get_engine)
 from vizier.services.defterdar import (parse_films,
                                        parse_films_articles)
 
