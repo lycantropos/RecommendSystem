@@ -44,7 +44,7 @@ Run `Docker` container:
 docker-compose up
 ```
 
-### Running with Docker for development
+### Running for development
 Run `Docker` container with `PyCharm` `Python Remote Debug`:
 ```bash
 ./set-dockerhost.sh docker-compose up
