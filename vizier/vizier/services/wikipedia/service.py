@@ -18,14 +18,13 @@ WIKILINKS_EXCEPTION = {'Keerthi Chakra',
                        'Diary of a Wimpy Kid',
                        'Diary of a Wimpy Kid: Rodrick Rules',
                        'Halloween H20: 20 Years Later (film)',
-                       'The Ten (film)'}
-
-WIKILINKS_REPL = {'On Line': 'On_Line'}
-WIKILINKS_EXCEPTION.update(set(WIKILINKS_REPL.keys()))
+                       'The Ten (film)',
+                       'On Line'}
 
 
 async def get_articles_titles(*, year: int,
-                              session: ClientSession) -> Iterable[str]:
+                              session: ClientSession
+                              ) -> Iterable[str]:
     articles_dicts = await query_petscan(categories=f'{year}_films',
                                          session=session)
     articles_titles = (article_dict['title']
@@ -44,13 +43,15 @@ def is_title_correct(title: str) -> bool:
 
 
 async def get_imdb_id(article_title: str, *,
-                      session: ClientSession) -> Optional[int]:
+                      session: ClientSession
+                      ) -> Optional[int]:
     params = dict(action='expandtemplates',
                   text='{{IMDb title}}',
                   prop='wikitext',
                   title=article_title,
                   format='json')
-    async with session.get(WIKIPEDIA_API_URL, params=params) as response:
+    async with session.get(WIKIPEDIA_API_URL,
+                           params=params) as response:
         response_json = await response.json()
         templates = response_json['expandtemplates']
         imdb_link = templates.get('wikitext', '')

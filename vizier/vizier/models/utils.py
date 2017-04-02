@@ -9,7 +9,7 @@ from vizier.utils import IMDB_ID_RE
 
 RELEASE_DATE_FORMAT = '%d %b %Y'
 UNRATED_CONTENT_RATINGS = {'NOT RATED', 'UNRATED'}
-DURATION_RE = re.compile('^\d+(?= min$)')
+DURATION_RE = re.compile('^(\d+ h\s*)?((\d+)(?= min$))?')
 
 
 def parse_year(year_str: str) -> int:
@@ -54,8 +54,18 @@ def parse_duration(duration_str: Optional[str]
     except AttributeError:
         return None
     match = DURATION_RE.match(duration_str)
-    minutes_count = int(match.group(0))
-    return timedelta(minutes=minutes_count)
+    try:
+        hours_count_str = re.sub('\D', '',
+                                 match.group(1))
+        hours_count = int(hours_count_str)
+    except TypeError:
+        hours_count = 0
+    try:
+        minutes_count = int(match.group(2))
+    except TypeError:
+        minutes_count = 0
+    return timedelta(hours=hours_count,
+                     minutes=minutes_count)
 
 
 def normalize_value(value: str) -> Optional[str]:
