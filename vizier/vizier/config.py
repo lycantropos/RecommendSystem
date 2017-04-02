@@ -9,4 +9,4 @@ FIRST_FILM_YEAR = 1887
 WIKIPEDIA_API_URL = 'https://en.wikipedia.org/w/api.php'
 IMDB_API_URL = 'https://www.omdbapi.com'
 PETSCAN_API_URL = 'https://petscan.wmflabs.org'
-RETRY_INTERVAL_IN_SECONDS = 2
+RETRY_INTERVAL_IN_SECONDS = 1

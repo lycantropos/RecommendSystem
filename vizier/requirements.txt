@@ -1,6 +1,3 @@
-# for asynchronous working with PostgreSQL/MySQL
-git+https://github.com/lycantropos/beylerbey#egg=beylerbey
-
 # setup script requirements
 setuptools>=34.2.0
 

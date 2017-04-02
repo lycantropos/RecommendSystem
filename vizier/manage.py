@@ -6,6 +6,7 @@ from datetime import date
 
 import click
 import pkg_resources
+from python_utils.data_access import get_engine
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import (database_exists,
                               create_database,
@@ -15,11 +16,7 @@ from vizier.config import (PACKAGE,
                            CONFIG_DIR_NAME,
                            LOGGING_CONF_FILE_NAME,
                            FIRST_FILM_YEAR)
-from vizier.models import Genre
 from vizier.models.base import Base
-from vizier.models.genre import GENRES_NAMES
-from python_utils.data_access import (get_session,
-                                      get_engine)
 from vizier.services.defterdar import (parse_films,
                                        parse_films_articles)
 
@@ -48,15 +45,12 @@ def set_logging(logging_conf_file_path: str, verbose: bool):
 @main.command(name='run')
 @click.option('--clean', is_flag=True, help='Removes database.')
 @click.option('--init', is_flag=True, help='Initializes database.')
-@click.option('--seed', is_flag=True, help='Adds test data to database.')
 @click.pass_context
-def run(ctx: click.Context, clean: bool, init: bool, seed: bool):
+def run(ctx: click.Context, clean: bool, init: bool):
     if clean:
         ctx.invoke(clean_db)
     if init:
         ctx.invoke(init_db)
-    if seed:
-        ctx.invoke(seed_data)
     logging.info('Running "Vizier" service.')
     db_uri = make_url(ctx.obj['db_uri'])
     next_year = date.today().year + 1
@@ -96,19 +90,6 @@ def init_db(ctx: click.Context):
     with get_engine(db_uri) as engine:
         logging.info(f'Creating "{db_uri_str}" database schema.')
         Base.metadata.create_all(bind=engine)
-
-
-@main.command(name='seed_data')
-@click.pass_context
-def seed_data(ctx: click.Context):
-    """Adds test data to database."""
-    db_uri = make_url(ctx.obj['db_uri'])
-    with get_engine(db_uri) as engine:
-        with get_session(engine) as session:
-            logging.info('Seeding data')
-            for genre_name in GENRES_NAMES:
-                session.add(Genre(genre_name))
-            session.commit()
 
 
 if __name__ == '__main__':

@@ -39,7 +39,9 @@ def parse_rating(rating_str: Optional[str]
 def parse_date(date_str: Optional[str]
                ) -> Optional[date]:
     try:
-        return datetime.strptime(date_str, RELEASE_DATE_FORMAT).date()
+        return (datetime.strptime(date_str,
+                                  RELEASE_DATE_FORMAT)
+                .date())
     except TypeError:
         return date_str
 
@@ -47,9 +49,11 @@ def parse_date(date_str: Optional[str]
 def parse_duration(duration_str: Optional[str]
                    ) -> Optional[timedelta]:
     try:
-        match = DURATION_RE.match(duration_str)
-    except TypeError:
-        return duration_str
+        # there are values like "1,428 min"
+        duration_str = duration_str.replace(',', '')
+    except AttributeError:
+        return None
+    match = DURATION_RE.match(duration_str)
     minutes_count = int(match.group(0))
     return timedelta(minutes=minutes_count)
 

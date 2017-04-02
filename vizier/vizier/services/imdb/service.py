@@ -16,14 +16,18 @@ from .utils import IMDB_ID_LENGTH
 logger = logging.getLogger(__name__)
 
 
-async def get_raw_film(*, article_title: str, year: int,
-                       session: ClientSession):
+async def get_raw_film(*, article_id: int,
+                       article_title: str,
+                       year: int,
+                       session: ClientSession
+                       ) -> Dict[str, Any]:
     imdb_id = await get_imdb_id(article_title=article_title,
                                 session=session)
     if imdb_id is not None:
         resp = await query_imdb(imdb_id=imdb_id,
                                 year=year,
                                 session=session)
+        resp['article_id'] = article_id
         return resp
 
 
@@ -43,8 +47,8 @@ async def query_imdb(*, imdb_id: Optional[int],
                 logger.debug(f'Attempt #{attempt_num} failed: '
                              f'server "{IMDB_API_URL}" answered with '
                              f'status code {A_TIMEOUT_OCCURRED}. '
-                             f'Waiting {RETRY_INTERVAL_IN_SECONDS} '
-                             'before next attempt')
+                             f'Waiting {RETRY_INTERVAL_IN_SECONDS} second(s) '
+                             'before next attempt.')
                 await sleep(RETRY_INTERVAL_IN_SECONDS)
                 continue
             try:

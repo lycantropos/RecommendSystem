@@ -4,10 +4,10 @@ from asyncio import (AbstractEventLoop,
 from typing import List
 
 from aiohttp import ClientSession
-from beylerbey.data_access import (is_db_uri_mysql,
-                                   get_connection_pool,
-                                   insert)
-from beylerbey.types import ConnectionPoolType
+from cetus.types import ConnectionPoolType
+from cetus.data_access import (is_db_uri_mysql,
+                               get_connection_pool,
+                               insert)
 from sqlalchemy import Column
 from sqlalchemy.engine.url import URL
 
@@ -62,7 +62,7 @@ async def parse_films_article_step(
         is_mysql: bool,
         connection_pool: ConnectionPoolType,
         session: ClientSession) -> None:
-    logger.info(f'Processing film articles '
+    logger.info(f'Processing films articles '
                 f'from {start_year} year '
                 f'to {stop_year - 1} year.')
     tasks = [ensure_future(

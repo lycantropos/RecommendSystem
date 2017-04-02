@@ -1,5 +1,7 @@
-from typing import Iterator
+from typing import (Any,
+                    Iterator)
 
+from cetus.types import ColumnValueType
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
@@ -24,6 +26,18 @@ class ModelMixin:
 
     @classmethod
     def columns_fields_names(cls) -> Iterator[str]:
-        for field_name, value in vars(cls).items():
-            if isinstance(value, InstrumentedAttribute):
-                yield field_name
+        for field_name, field_content in vars(cls).items():
+            field_is_column = is_column_field(field_content)
+            if not field_is_column:
+                continue
+            yield field_name
+
+    @property
+    def record(self) -> Iterator[ColumnValueType]:
+        for column_field_name in self.columns_fields_names():
+            yield getattr(self, column_field_name)
+
+
+def is_column_field(field_content: Any) -> bool:
+    return (isinstance(field_content, InstrumentedAttribute)
+            and field_content.prop.strategy_wildcard_key == 'column')

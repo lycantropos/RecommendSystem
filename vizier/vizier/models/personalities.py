@@ -2,14 +2,19 @@ from sqlalchemy import (Column,
                         Integer,
                         String)
 
-from .base import Base, ModelMixin
+from .base import (Base,
+                   ModelMixin)
 
 
-class Director(Base, ModelMixin):
+class Director(ModelMixin, Base):
     __tablename__ = 'directors'
 
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, nullable=False, unique=True)
+    id = Column('id', Integer,
+                primary_key=True,
+                autoincrement=True)
+    name = Column('name', String,
+                  nullable=False,
+                  unique=True)
 
     def __init__(self, name: str):
         self.name = name
@@ -18,11 +23,15 @@ class Director(Base, ModelMixin):
         return hash(self.name)
 
 
-class Writer(Base, ModelMixin):
+class Writer(ModelMixin, Base):
     __tablename__ = 'writers'
 
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, nullable=False, unique=True)
+    id = Column('id', Integer,
+                primary_key=True,
+                autoincrement=True)
+    name = Column('name', String,
+                  nullable=False,
+                  unique=True)
 
     def __init__(self, name: str):
         self.name = name
@@ -31,11 +40,15 @@ class Writer(Base, ModelMixin):
         return hash(self.name)
 
 
-class Actor(Base, ModelMixin):
+class Actor(ModelMixin, Base):
     __tablename__ = 'actors'
 
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
-    name = Column('name', String, nullable=False, unique=True)
+    id = Column('id', Integer,
+                primary_key=True,
+                autoincrement=True)
+    name = Column('name', String,
+                  nullable=False,
+                  unique=True)
 
     def __init__(self, name: str):
         self.name = name
