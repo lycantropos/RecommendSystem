@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 from vizier.config import PACKAGE
 
 setup(name=PACKAGE,
-      version='0.0.1',
+      version='0.1.0',
       packages=find_packages(),
       install_requires=[
           'wikipedia==1.4.0',
